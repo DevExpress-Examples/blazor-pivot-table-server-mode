@@ -4,12 +4,15 @@
 @using PivotTableBindToData.Northwind
 @using Microsoft.EntityFrameworkCore
 @using System.Drawing;
+@using DevExpress.Data.Linq
 @inject IDbContextFactory<NorthwindContext> NorthwindContextFactory
 @implements IDisposable
 @using DevExpress.Blazor.PivotTable
 
 <div>
-    <DxPivotTable Data="Data">
+    <DxPivotTable Data="DataSource"
+                  VirtualScrollingEnabled="true"
+                  VirtualScrollingMode="PivotTableVirtualScrollingMode.Both">
     <Fields>
         <DxPivotTableField Field="CategoryName" Area="@PivotTableArea.Row" SummaryType="PivotTableSummaryType.CountDistinct"/> 
         <DxPivotTableField Field="ProductName"  Area="@PivotTableArea.Row" SummaryType="PivotTableSummaryType.CountDistinct"/>
@@ -29,31 +32,34 @@
 
 @code {
     NorthwindContext Northwind { get; set; }
-    IEnumerable<PivotRow> Data { get; set; }
+    EntityServerModeSource DataSource { get; set; }
 
-    protected override async Task OnInitializedAsync() {
+    protected override void OnInitialized() {
         Northwind = NorthwindContextFactory.CreateDbContext();
 
-        var products = await Northwind.Products.ToListAsync();
-        var categories = await Northwind.Categories.ToListAsync();
-        var orders = await Northwind.Orders.ToListAsync();
-        var orderDetails = await Northwind.OrderDetails.ToListAsync();
+        var query = from c in Northwind.Categories
+                    join p in Northwind.Products on c.CategoryId equals p.CategoryId
+                    join od in Northwind.OrderDetails on p.ProductId equals od.ProductId
+                    join o in Northwind.Orders on od.OrderId equals o.OrderId
+                    select new PivotRow {
+                        OrderId = od.OrderId,
+                        ProductId = od.ProductId,
+                        CategoryName = c.CategoryName,
+                        ProductName = p.ProductName,
+                        UnitPrice = p.UnitPrice,
+                        OrderDate = o.OrderDate,
+                        ShipCountry = o.ShipCountry,
+                        ShipCity = o.ShipCity
+                    };
 
-        Data = (from c in categories
-                      join p in products on c.CategoryId equals p.CategoryId
-                      join od in orderDetails on p.ProductId equals od.ProductId
-                      select new PivotRow{
-                          CategoryName = c.CategoryName,
-                          ProductName = p.ProductName,
-                          UnitPrice = p.UnitPrice,
-                          OrderDate = od.Order.OrderDate,
-                          ShipCountry = od.Order.ShipCountry,
-                          ShipCity = od.Order.ShipCity
-                      })
-              .ToList();
+        DataSource = new EntityServerModeSource {
+            QueryableSource = query,
+            KeyExpression = "OrderId;ProductId"
+        };
     }
 
-   public void Dispose() {
+    public void Dispose() {
+        DataSource?.Dispose();
         Northwind?.Dispose();
     }
 }
