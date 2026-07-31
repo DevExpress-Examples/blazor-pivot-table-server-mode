@@ -38,10 +38,10 @@
         Northwind = await NorthwindContextFactory.CreateDbContextAsync();
         Northwind.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-        var query = from c in Northwind.Categories.AsNoTracking()
-                    join p in Northwind.Products.AsNoTracking() on c.CategoryId equals p.CategoryId
-                    join od in Northwind.OrderDetails.AsNoTracking() on p.ProductId equals od.ProductId
-                    join o in Northwind.Orders.AsNoTracking() on od.OrderId equals o.OrderId
+        var query = from c in Northwind.Categories
+                    join p in Northwind.Products on c.CategoryId equals p.CategoryId
+                    join od in Northwind.OrderDetails on p.ProductId equals od.ProductId
+                    join o in Northwind.Orders on od.OrderId equals o.OrderId
                     select new PivotRow {
                         OrderId = od.OrderId,
                         ProductId = od.ProductId,
