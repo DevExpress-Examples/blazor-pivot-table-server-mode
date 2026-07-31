@@ -3,10 +3,9 @@
 @using PivotTableBindToData.Data
 @using PivotTableBindToData.Northwind
 @using Microsoft.EntityFrameworkCore
-@using System.Drawing;
 @using DevExpress.Data.Linq
 @inject IDbContextFactory<NorthwindContext> NorthwindContextFactory
-@implements IDisposable
+@implements IAsyncDisposable
 @using DevExpress.Blazor.PivotTable
 
 <DxPivotTable Data="DataSource"
@@ -32,13 +31,17 @@
     NorthwindContext Northwind { get; set; }
     EntityServerModeSource DataSource { get; set; }
 
-    protected override void OnInitialized() {
-        Northwind = NorthwindContextFactory.CreateDbContext();
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (!firstRender || Northwind != null)
+            return;
 
-        var query = from c in Northwind.Categories
-                    join p in Northwind.Products on c.CategoryId equals p.CategoryId
-                    join od in Northwind.OrderDetails on p.ProductId equals od.ProductId
-                    join o in Northwind.Orders on od.OrderId equals o.OrderId
+        Northwind = await NorthwindContextFactory.CreateDbContextAsync();
+        Northwind.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+        var query = from c in Northwind.Categories.AsNoTracking()
+                    join p in Northwind.Products.AsNoTracking() on c.CategoryId equals p.CategoryId
+                    join od in Northwind.OrderDetails.AsNoTracking() on p.ProductId equals od.ProductId
+                    join o in Northwind.Orders.AsNoTracking() on od.OrderId equals o.OrderId
                     select new PivotRow {
                         OrderId = od.OrderId,
                         ProductId = od.ProductId,
@@ -54,10 +57,13 @@
             QueryableSource = query,
             KeyExpression = "OrderId;ProductId"
         };
+
+        StateHasChanged();
     }
 
-    public void Dispose() {
+    public async ValueTask DisposeAsync() {
         DataSource?.Dispose();
-        Northwind?.Dispose();
+        if (Northwind != null)
+            await Northwind.DisposeAsync();
     }
 }
