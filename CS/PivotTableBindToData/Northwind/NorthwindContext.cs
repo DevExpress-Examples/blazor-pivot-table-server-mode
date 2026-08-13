@@ -17,6 +17,7 @@ namespace PivotTableBindToData.Northwind {
         public virtual DbSet<Shipper> Shippers { get; set; }
         public virtual DbSet<Supplier> Suppliers { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
+        public virtual DbSet<Sale> Sales { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         }
