@@ -12,7 +12,7 @@
               VirtualScrollingEnabled="true"
               VirtualScrollingMode="PivotTableVirtualScrollingMode.Both">
     <Fields>
-        <DxPivotTableField Field="StoreNumber" Area="@PivotTableArea.Row" SummaryType="PivotTableSummaryType.CountDistinct" />
+        <DxPivotTableField Field="StoreName" Area="@PivotTableArea.Row" SummaryType="PivotTableSummaryType.CountDistinct" />
         <DxPivotTableField Field="SaleDate" Area="@PivotTableArea.Column" GroupInterval="@PivotTableGroupInterval.DateYear" Caption="Year" />
         <DxPivotTableField Field="SaleDate" Area="@PivotTableArea.Column" GroupInterval="@PivotTableGroupInterval.DateQuarter" Caption="Quarter">
             <ValueTemplate>
@@ -36,16 +36,8 @@
         Northwind = await NorthwindContextFactory.CreateDbContextAsync();
         Northwind.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-        var query = from s in Northwind.Sales
-                    select new PivotRow {
-                        SaleId = s.SaleId,
-                        StoreNumber = s.StoreNumber,
-                        SaleDate = s.SaleDate,
-                        Amount = s.Amount
-                    };
-
         DataSource = new EntityServerModeSource {
-            QueryableSource = query,
+            QueryableSource = Northwind.Sales,
             KeyExpression = "SaleId"
         };
 

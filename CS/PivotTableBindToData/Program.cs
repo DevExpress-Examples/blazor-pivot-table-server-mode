@@ -13,19 +13,16 @@ builder.Services.AddDevExpressBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
 
-bool UseSqlite = true; // Set to false to use SQL Server
+bool UseSqlite = false; // Set to false to use SQL Server
 
 if (UseSqlite) {
-    // SQLITE:
     builder.Services.AddDbContextFactory<NorthwindContext>((sp, options) => {
         var env = sp.GetRequiredService<IWebHostEnvironment>();
-        //var dbPath = Path.Combine(env.ContentRootPath, "Northwind.db");
         var dbPath = Path.Combine(env.ContentRootPath, "sales.db");
         options.UseSqlite("Data Source=" + dbPath);
     });
 }
 else {
-    // SQL SERVER:
     builder.Services.AddDbContextFactory<NorthwindContext>(options => {
         options.UseSqlServer(builder.Configuration.GetConnectionString("Northwind"));
     });

@@ -1,8 +1,0 @@
-﻿namespace PivotTableBindToData.Data {
-    public class PivotRow {
-        public int SaleId { get; set; }
-        public int StoreNumber { get; set; }
-        public DateTime? SaleDate { get; set; }
-        public decimal? Amount { get; set; }
-    }
-}
