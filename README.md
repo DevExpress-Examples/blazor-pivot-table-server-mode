@@ -4,7 +4,7 @@
 [![](https://img.shields.io/badge/📖_How_to_use_DevExpress_Examples-e9f6fc?style=flat-square)](https://docs.devexpress.com/GeneralInformation/403183)
 [![](https://img.shields.io/badge/💬_Leave_Feedback-feecdd?style=flat-square)](#does-this-example-address-your-development-requirementsobjectives)
 <!-- default badges end -->
-# Blazor Pivot Table - Data binding using Entity Framework Core
+# Blazor Pivot Table – Data binding using Entity Framework Core
 
 This example uses [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/) to bind the [DevExpress Blazor Pivot Table](https://docs.devexpress.com/Blazor/405245/components/pivot-table) to data.
 
