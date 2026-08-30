@@ -13,7 +13,7 @@ builder.Services.AddDevExpressBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
 
-bool UseSqlite = false; // Set to false to use SQL Server
+bool UseSqlite = true; // Set to false to use SQL Server
 
 if (UseSqlite) {
     builder.Services.AddDbContextFactory<NorthwindContext>((sp, options) => {
