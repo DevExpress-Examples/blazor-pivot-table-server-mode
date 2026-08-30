@@ -1,6 +1,6 @@
 ﻿#nullable disable
 
-namespace PivotTableBindToData.Northwind {
+namespace PivotTableBindToData.SalesDb {
     public partial class Sale {
         public int SaleId { get; set; }
         public int StoreNumber { get; set; }

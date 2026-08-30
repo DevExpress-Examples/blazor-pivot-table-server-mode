@@ -1,10 +1,9 @@
 ﻿@page "/"
 
-@using PivotTableBindToData.Data
-@using PivotTableBindToData.Northwind
+@using PivotTableBindToData.SalesDb
 @using Microsoft.EntityFrameworkCore
 @using DevExpress.Data.Linq
-@inject IDbContextFactory<NorthwindContext> NorthwindContextFactory
+@inject IDbContextFactory<SalesContext> SalesContextFactory
 @implements IAsyncDisposable
 @using DevExpress.Blazor.PivotTable
 
@@ -26,14 +25,14 @@
 
 
 @code {
-    NorthwindContext Northwind { get; set; }
+    SalesContext Northwind { get; set; }
     EntityServerModeSource DataSource { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender) {
         if (!firstRender || Northwind != null)
             return;
 
-        Northwind = await NorthwindContextFactory.CreateDbContextAsync();
+        Northwind = await SalesContextFactory.CreateDbContextAsync();
         Northwind.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
         DataSource = new EntityServerModeSource {
