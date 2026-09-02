@@ -8,7 +8,7 @@ CREATE TABLE Sales (
     StoreName TEXT NULL
 );
 
---BEGIN TRANSACTION;
+BEGIN TRANSACTION;
 
 WITH RECURSIVE
 Dates(SaleDate) AS (
@@ -61,7 +61,7 @@ SELECT
     ROUND(15.0 + ((abs(random()) / 9223372036854775807.0) * (950.0 - 15.0)), 2) AS Amount
 FROM Transactions;
 
---COMMIT;
+COMMIT;
 
 WITH StoreNames(StoreNumber, StoreName) AS (
     VALUES

@@ -28,26 +28,17 @@
 else if (DataExists == false) {
     <div class="generate-data-container">
         <p>The Sales table (or the database file) was not found.</p>
-        <DxButton Text="Generate data" Enabled="@(!IsGenerating)" Click="@(() => ShowConfirmPopup = true)" />
+        <DxButton Text="Generate data" Enabled="@(!IsGenerating)" Click="@GenerateDataAsync" />
         @if (IsGenerating) {
             <p>Generating 1,000,000 rows, please wait...</p>
         }
     </div>
 }
 
-<DxMessageBox @bind-Visible="@ShowConfirmPopup"
-              Type="MessageBoxType.Confirmation"
-              Title="Generate Data"
-              Text="Are you sure? This will generate a table with 1 million rows."
-              OkButtonText="Generate"
-              CancelButtonText="Cancel"
-              Closed="@OnConfirmPopupClosed" />
-
 @code {
     SalesContext SalesContext { get; set; }
     EntityServerModeSource DataSource { get; set; }
     bool? DataExists { get; set; }
-    bool ShowConfirmPopup { get; set; }
     bool IsGenerating { get; set; }
 
     bool UseSqlite => Configuration.GetValue("UseSqlite", true);
@@ -66,13 +57,7 @@ else if (DataExists == false) {
         StateHasChanged();
     }
 
-    async Task OnConfirmPopupClosed(bool confirmed) {
-        StateHasChanged();
-        if (confirmed)
-            await OnGenerateConfirmedAsync();
-    }
-
-    async Task OnGenerateConfirmedAsync() {
+    async Task GenerateDataAsync() {
         IsGenerating = true;
         StateHasChanged();
 
