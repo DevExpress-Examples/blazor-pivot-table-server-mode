@@ -35,19 +35,13 @@ else if (DataExists == false) {
     </div>
 }
 
-<DxPopup @bind-Visible="@ShowConfirmPopup"
-         HeaderText="Generate Data"
-         ShowFooter="true"
-         CloseOnEscape="true"
-         Width="400px">
-    <BodyContentTemplate>
-        <p>Are you sure? This will generate a table with 1 million rows.</p>
-    </BodyContentTemplate>
-    <FooterContentTemplate>
-        <DxButton Text="Generate" RenderStyle="ButtonRenderStyle.Primary" Click="@OnGenerateConfirmedAsync" />
-        <DxButton Text="Cancel" RenderStyle="ButtonRenderStyle.Secondary" Click="@(() => ShowConfirmPopup = false)" />
-    </FooterContentTemplate>
-</DxPopup>
+<DxMessageBox @bind-Visible="@ShowConfirmPopup"
+              Type="MessageBoxType.Confirmation"
+              Title="Generate Data"
+              Text="Are you sure? This will generate a table with 1 million rows."
+              OkButtonText="Generate"
+              CancelButtonText="Cancel"
+              Closed="@OnConfirmPopupClosed" />
 
 @code {
     SalesContext SalesContext { get; set; }
@@ -72,8 +66,12 @@ else if (DataExists == false) {
         StateHasChanged();
     }
 
+    async Task OnConfirmPopupClosed(bool confirmed) {
+        if (confirmed)
+            await OnGenerateConfirmedAsync();
+    }
+
     async Task OnGenerateConfirmedAsync() {
-        ShowConfirmPopup = false;
         IsGenerating = true;
         StateHasChanged();
 
