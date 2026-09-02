@@ -4,9 +4,11 @@
 @using Microsoft.EntityFrameworkCore
 @using DevExpress.Data.Linq
 @inject IDbContextFactory<SalesContext> SalesContextFactory
+@inject IConfiguration Configuration
 @implements IAsyncDisposable
 @using DevExpress.Blazor.PivotTable
 
+@if (DataExists == true) {
 <DxPivotTable Data="DataSource"
               VirtualScrollingEnabled="true"
               VirtualScrollingMode="PivotTableVirtualScrollingMode.Both">
@@ -22,11 +24,39 @@
         <DxPivotTableField Field="@nameof(Sale.SaleId)" Caption="Count" Area="PivotTableArea.Data" SummaryType="PivotTableSummaryType.Count" />
     </Fields>
 </DxPivotTable>
+}
+else if (DataExists == false) {
+    <div class="generate-data-container">
+        <p>The Sales table (or the database file) was not found.</p>
+        <DxButton Text="Generate data" Enabled="@(!IsGenerating)" Click="@(() => ShowConfirmPopup = true)" />
+        @if (IsGenerating) {
+            <p>Generating 1,000,000 rows, please wait...</p>
+        }
+    </div>
+}
 
+<DxPopup @bind-Visible="@ShowConfirmPopup"
+         HeaderText="Generate Data"
+         ShowFooter="true"
+         CloseOnEscape="true"
+         Width="400px">
+    <BodyContentTemplate>
+        <p>Are you sure? This will generate a table with 1 million rows.</p>
+    </BodyContentTemplate>
+    <FooterContentTemplate>
+        <DxButton Text="Generate" RenderStyle="ButtonRenderStyle.Primary" Click="@OnGenerateConfirmedAsync" />
+        <DxButton Text="Cancel" RenderStyle="ButtonRenderStyle.Secondary" Click="@(() => ShowConfirmPopup = false)" />
+    </FooterContentTemplate>
+</DxPopup>
 
 @code {
     SalesContext Northwind { get; set; }
     EntityServerModeSource DataSource { get; set; }
+    bool? DataExists { get; set; }
+    bool ShowConfirmPopup { get; set; }
+    bool IsGenerating { get; set; }
+
+    bool UseSqlite => Configuration.GetValue("UseSqlite", true);
 
     protected override async Task OnAfterRenderAsync(bool firstRender) {
         if (!firstRender || Northwind != null)
@@ -35,12 +65,31 @@
         Northwind = await SalesContextFactory.CreateDbContextAsync();
         Northwind.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
+        DataExists = await SalesDataGenerator.SalesTableExistsAsync(Northwind);
+        if (DataExists == true)
+            CreateDataSource();
+
+        StateHasChanged();
+    }
+
+    async Task OnGenerateConfirmedAsync() {
+        ShowConfirmPopup = false;
+        IsGenerating = true;
+        StateHasChanged();
+
+        await SalesDataGenerator.GenerateAsync(Northwind, UseSqlite);
+
+        CreateDataSource();
+        DataExists = true;
+        IsGenerating = false;
+        StateHasChanged();
+    }
+
+    void CreateDataSource() {
         DataSource = new EntityServerModeSource {
             QueryableSource = Northwind.Sales,
             KeyExpression = nameof(Sale.SaleId)
         };
-
-        StateHasChanged();
     }
 
     public async ValueTask DisposeAsync() {

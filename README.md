@@ -14,6 +14,12 @@ This example uses [Entity Framework Core](https://learn.microsoft.com/en-us/ef/c
 
 - [Index.razor](./CS/PivotTableBindToData/Pages/Index.razor)
 - [Program.cs](./CS/PivotTableBindToData/Program.cs)
+- [SalesDataGenerator.cs](./CS/PivotTableBindToData/SalesDb/SalesDataGenerator.cs)
+
+If the `Sales` table (or the database file) is not found, the page displays a **Generate data**
+button instead of the Pivot Table. After confirmation, the app runs the SQL script that matches
+the configured data provider (SQLite or SQL Server) to create the table and populate it with
+1,000,000 sample rows.
 
 ## Documentation
 

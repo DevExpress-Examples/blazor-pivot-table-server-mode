@@ -22,4 +22,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SalesDb\Scripts\SQLiteDbGenerator.sql" />
+    <EmbeddedResource Include="SalesDb\Scripts\SqlServerDbGenerator.sql" />
+  </ItemGroup>
 </Project>
