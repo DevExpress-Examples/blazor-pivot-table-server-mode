@@ -37,7 +37,7 @@
 
         DataSource = new EntityServerModeSource {
             QueryableSource = Northwind.Sales,
-            KeyExpression = "SaleId"
+            KeyExpression = nameof(Sale.SaleId)
         };
 
         StateHasChanged();
