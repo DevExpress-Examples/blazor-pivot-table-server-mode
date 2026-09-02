@@ -50,7 +50,7 @@ else if (DataExists == false) {
 </DxPopup>
 
 @code {
-    SalesContext Northwind { get; set; }
+    SalesContext SalesContext { get; set; }
     EntityServerModeSource DataSource { get; set; }
     bool? DataExists { get; set; }
     bool ShowConfirmPopup { get; set; }
@@ -59,13 +59,13 @@ else if (DataExists == false) {
     bool UseSqlite => Configuration.GetValue("UseSqlite", true);
 
     protected override async Task OnAfterRenderAsync(bool firstRender) {
-        if (!firstRender || Northwind != null)
+        if (!firstRender || SalesContext != null)
             return;
 
-        Northwind = await SalesContextFactory.CreateDbContextAsync();
-        Northwind.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        SalesContext = await SalesContextFactory.CreateDbContextAsync();
+        SalesContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-        DataExists = await SalesDataGenerator.SalesTableExistsAsync(Northwind);
+        DataExists = await SalesDataGenerator.SalesTableExistsAsync(SalesContext);
         if (DataExists == true)
             CreateDataSource();
 
@@ -77,7 +77,7 @@ else if (DataExists == false) {
         IsGenerating = true;
         StateHasChanged();
 
-        await SalesDataGenerator.GenerateAsync(Northwind, UseSqlite);
+        await SalesDataGenerator.GenerateAsync(SalesContext, UseSqlite);
 
         CreateDataSource();
         DataExists = true;
@@ -87,14 +87,14 @@ else if (DataExists == false) {
 
     void CreateDataSource() {
         DataSource = new EntityServerModeSource {
-            QueryableSource = Northwind.Sales,
+            QueryableSource = SalesContext.Sales,
             KeyExpression = nameof(Sale.SaleId)
         };
     }
 
     public async ValueTask DisposeAsync() {
         DataSource?.Dispose();
-        if (Northwind != null)
-            await Northwind.DisposeAsync();
+        if (SalesContext != null)
+            await SalesContext.DisposeAsync();
     }
 }

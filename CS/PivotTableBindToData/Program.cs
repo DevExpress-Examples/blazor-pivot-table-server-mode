@@ -20,7 +20,7 @@ if (UseSqlite) {
 }
 else {
     builder.Services.AddDbContextFactory<SalesContext>(options => {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("Northwind"));
+        options.UseSqlServer(builder.Configuration.GetConnectionString("SalesDatabase"));
     });
 }
 
