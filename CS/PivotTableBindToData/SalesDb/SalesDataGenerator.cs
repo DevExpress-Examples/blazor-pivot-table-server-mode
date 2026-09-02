@@ -1,12 +1,10 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
 namespace PivotTableBindToData.SalesDb {
-    // Checks whether the Sales table is present and (re)generates sample data (1 million+ rows)
-    // by running the embedded SQL script that matches the currently configured database provider.
     public static class SalesDataGenerator {
 
         public static async Task<bool> SalesTableExistsAsync(SalesContext context) {

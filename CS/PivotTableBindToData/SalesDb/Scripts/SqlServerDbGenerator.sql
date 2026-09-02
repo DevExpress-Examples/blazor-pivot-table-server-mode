@@ -56,14 +56,11 @@ BEGIN
         FROM (VALUES (1), (2), (3), (4)) AS t(N)
     ) trans;
 
-    -- Move to the next day
     SET @CurrentDate = DATEADD(DAY, 1, @CurrentDate);
 END
 
--- Commit all changes
 COMMIT TRAN;
 
--- Clean up temporary data
 DROP TABLE #Stores;
 
 update [Sales] set [StoreName] = 'Contoso Canberra Store' where [StoreNumber] = 1
