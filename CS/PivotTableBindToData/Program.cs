@@ -9,7 +9,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddDevExpressBlazor();
 
 
-bool UseSqlite = true; // Set to false to use SQL Server
+bool UseSqlite = builder.Configuration.GetValue("UseSqlite", true); // Set to false in appsettings.json to use SQL Server
 
 if (UseSqlite) {
     builder.Services.AddDbContextFactory<SalesContext>((sp, options) => {
