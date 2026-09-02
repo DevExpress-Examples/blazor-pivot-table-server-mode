@@ -67,6 +67,7 @@ else if (DataExists == false) {
     }
 
     async Task OnConfirmPopupClosed(bool confirmed) {
+        StateHasChanged();
         if (confirmed)
             await OnGenerateConfirmedAsync();
     }
@@ -75,7 +76,11 @@ else if (DataExists == false) {
         IsGenerating = true;
         StateHasChanged();
 
-        await SalesDataGenerator.GenerateAsync(SalesContext, UseSqlite);
+        // Microsoft.Data.Sqlite has no true async I/O: its "async" APIs run synchronously
+        // on the calling thread. Task.Run offloads the call to a thread pool thread so the
+        // Blazor renderer's dispatcher thread is free to flush the "Generating..." UI update
+        // to the browser before the (potentially long) generation completes.
+        await Task.Run(() => SalesDataGenerator.GenerateAsync(SalesContext, UseSqlite));
 
         CreateDataSource();
         DataExists = true;
