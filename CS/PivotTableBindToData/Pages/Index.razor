@@ -41,7 +41,12 @@ else if (DataExists == false) {
     bool? DataExists { get; set; }
     bool IsGenerating { get; set; }
 
-    bool UseSqlite => Configuration.GetValue("UseSqlite", true);
+    DataProviders DataProvider {
+        get {
+            var dataProviderSetting = Configuration.GetValue("DataProvider", DataProviders.SQLite.ToString());
+            return Enum.TryParse(dataProviderSetting, ignoreCase: true, out DataProviders result) ? result : DataProviders.SQLite;
+        }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender) {
         if (!firstRender || SalesContext != null)
@@ -65,7 +70,7 @@ else if (DataExists == false) {
         // on the calling thread. Task.Run offloads the call to a thread pool thread so the
         // Blazor renderer's dispatcher thread is free to flush the "Generating..." UI update
         // to the browser before the (potentially long) generation completes.
-        await Task.Run(() => SalesDataGenerator.GenerateAsync(SalesContext, UseSqlite));
+        await Task.Run(() => SalesDataGenerator.GenerateAsync(SalesContext, DataProvider));
 
         CreateDataSource();
         DataExists = true;

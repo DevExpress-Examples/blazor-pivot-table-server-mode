@@ -17,10 +17,12 @@ namespace PivotTableBindToData.SalesDb {
             }
         }
 
-        public static async Task GenerateAsync(SalesContext context, bool useSqlite) {
-            string resourceName = useSqlite
-                ? "PivotTableBindToData.SalesDb.Scripts.SQLiteDbGenerator.sql"
-                : "PivotTableBindToData.SalesDb.Scripts.SqlServerDbGenerator.sql";
+        public static async Task GenerateAsync(SalesContext context, DataProviders dataProvider) {
+            string resourceName = dataProvider switch {
+                DataProviders.SQLite => "PivotTableBindToData.SalesDb.Scripts.SQLiteDbGenerator.sql",
+                DataProviders.SqlServer => "PivotTableBindToData.SalesDb.Scripts.SqlServerDbGenerator.sql",
+                _ => throw new InvalidOperationException($"Unsupported data provider: '{dataProvider}'. Supported values are '{DataProviders.SQLite}' and '{DataProviders.SqlServer}'.")
+            };
 
             string script = await ReadEmbeddedScriptAsync(resourceName);
 
