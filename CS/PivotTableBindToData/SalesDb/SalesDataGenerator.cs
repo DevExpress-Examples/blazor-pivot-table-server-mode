@@ -17,22 +17,19 @@ namespace PivotTableBindToData.SalesDb {
             }
         }
 
-        public static async Task GenerateAsync(SalesContext context, DataProviders dataProvider) {
+        public static async Task GenerateAsync(SalesContext context, string dataProvider) {
             string resourceName = dataProvider switch {
-                DataProviders.SQLite => "PivotTableBindToData.SalesDb.Scripts.SQLiteDbGenerator.sql",
-                DataProviders.SqlServer => "PivotTableBindToData.SalesDb.Scripts.SqlServerDbGenerator.sql",
-                _ => throw new InvalidOperationException($"Unsupported data provider: '{dataProvider}'. Supported values are '{DataProviders.SQLite}' and '{DataProviders.SqlServer}'.")
+                nameof(DataProviders.SQLite) => "PivotTableBindToData.SalesDb.Scripts.SQLiteDbGenerator.sql",
+                nameof(DataProviders.SqlServer) => "PivotTableBindToData.SalesDb.Scripts.SqlServerDbGenerator.sql",
+                _ => ""
             };
 
             string script = await ReadEmbeddedScriptAsync(resourceName);
 
-            // The SQL Server script uses "GO" batch separators, which ADO.NET cannot execute
-            // as part of a single command, so each batch is run separately.
             var batches = Regex.Split(script, @"^\s*GO\s*$", RegexOptions.Multiline | RegexOptions.IgnoreCase)
                 .Select(batch => batch.Trim())
                 .Where(batch => batch.Length > 0);
 
-            // Generating 1 million rows can take longer than the default command timeout.
             context.Database.SetCommandTimeout(0);
 
             foreach (var batch in batches)
