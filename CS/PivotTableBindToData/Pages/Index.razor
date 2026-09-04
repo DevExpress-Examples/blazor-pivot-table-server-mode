@@ -58,7 +58,7 @@ else if (DataExists == false) {
         IsGenerating = true;
         StateHasChanged();
 
-        await SalesDataGenerator.GenerateAsync(SalesContext, Configuration.GetValue("DataProvider", DataProviders.SQLite.ToString()));
+        await Task.Run(() => SalesDataGenerator.GenerateAsync(SalesContext, Configuration.GetValue("DataProvider", DataProviders.SQLite.ToString())));
 
         CreateDataSource();
         DataExists = true;

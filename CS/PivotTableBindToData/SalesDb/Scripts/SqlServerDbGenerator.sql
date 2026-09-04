@@ -189,4 +189,34 @@ update [Sales] set [StoreName] = 'Contoso Sapporo Store' where [StoreNumber] = 1
 update [Sales] set [StoreName] = 'Contoso Yokohama Store' where [StoreNumber] = 122
 
 
+
+-- Indexes covering the grouping/aggregation used by the pivot table
+-- (Row: StoreName, Columns: Year/Quarter, Data: Amount, Count: SaleID).
+CREATE NONCLUSTERED INDEX [IX_Sales_Pivot_Full] ON [dbo].[Sales]
+(
+    [StoreName] ASC,
+    [Year]      ASC,
+    [Quarter]   ASC
+)
+INCLUDE ([Amount], [SaleID])
+WITH (PAD_INDEX = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Sales_SaleDate] ON [dbo].[Sales]
+(
+    [SaleDate] ASC
+)
+INCLUDE ([StoreName], [Amount], [SaleID])
+WITH (PAD_INDEX = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON);
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Sales_Year_Quarter] ON [dbo].[Sales]
+(
+    [Year]    ASC,
+    [Quarter] ASC
+)
+INCLUDE ([StoreName], [Amount], [SaleID])
+WITH (PAD_INDEX = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON);
+GO
+
 PRINT 'Data generation successfully completed!';
