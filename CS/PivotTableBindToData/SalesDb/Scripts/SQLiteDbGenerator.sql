@@ -198,11 +198,12 @@ SET StoreName = (
 )
 WHERE StoreNumber IN (SELECT StoreNumber FROM StoreNames);
 
-
+
+
 -- Indexes covering the grouping/aggregation used by the pivot table
 -- (Row: StoreName, Columns: Year/Quarter, Data: Amount, Count: SaleID).
-CREATE INDEX IX_Sales_Pivot_Full ON Sales (StoreName, Year, Quarter);
-CREATE INDEX IX_Sales_SaleDate ON Sales (SaleDate);
-CREATE INDEX IX_Sales_Year_Quarter ON Sales (Year, Quarter);
+CREATE INDEX IX_Sales_Pivot_Full ON Sales (StoreName, Year, Quarter, Amount, SaleID);
+CREATE INDEX IX_Sales_SaleDate ON Sales (SaleDate, StoreName, Amount, SaleID);
+CREATE INDEX IX_Sales_Year_Quarter ON Sales (Year, Quarter, StoreName, Amount, SaleID);
 
 SELECT 'Data generation successfully completed!';
