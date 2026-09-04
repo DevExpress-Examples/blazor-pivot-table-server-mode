@@ -13,8 +13,8 @@
               VirtualScrollingEnabled="true">
     <Fields>
         <DxPivotTableField Field="StoreName" Area="@PivotTableArea.Row" SummaryType="PivotTableSummaryType.CountDistinct" />
-        <DxPivotTableField Field="SaleDate" Area="@PivotTableArea.Column" GroupInterval="@PivotTableGroupInterval.DateYear" Caption="Year" />
-        <DxPivotTableField Field="SaleDate" Area="@PivotTableArea.Column" GroupInterval="@PivotTableGroupInterval.DateQuarter" Caption="Quarter">
+        <DxPivotTableField Field="Year" Area="@PivotTableArea.Column" />
+        <DxPivotTableField Field="Quarter" Area="@PivotTableArea.Column">
             <ValueTemplate>
                 <span>@($"Q{context.Text}")</span>
             </ValueTemplate>

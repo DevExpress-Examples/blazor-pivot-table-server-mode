@@ -4,6 +4,8 @@ CREATE TABLE Sales (
     SaleID INTEGER PRIMARY KEY AUTOINCREMENT,
     StoreNumber INTEGER NOT NULL,
     SaleDate TEXT NOT NULL,
+    Year INTEGER GENERATED ALWAYS AS (CAST(strftime('%Y', SaleDate) AS INTEGER)) STORED,
+    Quarter INTEGER GENERATED ALWAYS AS ((CAST(strftime('%m', SaleDate) AS INTEGER) + 2) / 3) STORED,
     Amount REAL NOT NULL,
     StoreName TEXT NULL
 );

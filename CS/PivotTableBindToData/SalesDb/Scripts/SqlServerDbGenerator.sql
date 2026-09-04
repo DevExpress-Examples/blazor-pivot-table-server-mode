@@ -6,6 +6,8 @@ CREATE TABLE Sales (
     SaleID INT IDENTITY(1,1) PRIMARY KEY,
     StoreNumber INT NOT NULL,
     SaleDate DATE NOT NULL,
+    [Year]  AS (datepart(year,CONVERT([date],[SaleDate]))) PERSISTED,
+    [Quarter]  AS (datepart(quarter,CONVERT([date],[SaleDate]))) PERSISTED,
     Amount DECIMAL(18, 2) NOT NULL,
     [StoreName] [nvarchar](100) NULL
 );
