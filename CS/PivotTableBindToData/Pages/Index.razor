@@ -10,8 +10,7 @@
 
 @if (DataExists == true) {
 <DxPivotTable Data="DataSource"
-              VirtualScrollingEnabled="true"
-              VirtualScrollingMode="PivotTableVirtualScrollingMode.Both">
+              VirtualScrollingEnabled="true">
     <Fields>
         <DxPivotTableField Field="StoreName" Area="@PivotTableArea.Row" SummaryType="PivotTableSummaryType.CountDistinct" />
         <DxPivotTableField Field="SaleDate" Area="@PivotTableArea.Column" GroupInterval="@PivotTableGroupInterval.DateYear" Caption="Year" />
@@ -59,7 +58,7 @@ else if (DataExists == false) {
         IsGenerating = true;
         StateHasChanged();
 
-        await Task.Run(() => SalesDataGenerator.GenerateAsync(SalesContext, Configuration.GetValue("DataProvider", DataProviders.SQLite.ToString())));
+        await SalesDataGenerator.GenerateAsync(SalesContext, Configuration.GetValue("DataProvider", DataProviders.SQLite.ToString()));
 
         CreateDataSource();
         DataExists = true;
