@@ -1,8 +1,5 @@
-using PivotTableBindToData.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.EntityFrameworkCore;
-using PivotTableBindToData.Northwind;
+﻿using Microsoft.EntityFrameworkCore;
+using PivotTableBindToData.SalesDb;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,12 +7,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddDevExpressBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
-builder.Services.AddDbContextFactory<NorthwindContext>((sp, options) => {
-    var env = sp.GetRequiredService<IWebHostEnvironment>();
-    var dbPath = Path.Combine(env.ContentRootPath, "Northwind.db");
-    options.UseSqlite("Data Source=" + dbPath);
-});
+
+
+var dataProviderSetting = builder.Configuration.GetValue("DataProvider", DataProviders.SQLite.ToString());
+
+if (dataProviderSetting == DataProviders.SQLite.ToString()) {
+    builder.Services.AddDbContextFactory<SalesContext>((sp, options) => {
+        var env = sp.GetRequiredService<IWebHostEnvironment>();
+        var dbPath = Path.Combine(env.ContentRootPath, "sales.db");
+        options.UseSqlite("Data Source=" + dbPath);
+    });
+}
+else if (dataProviderSetting == DataProviders.SqlServer.ToString()) {
+    builder.Services.AddDbContextFactory<SalesContext>(options => {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("SalesDatabase"));
+    });
+}
 
 var app = builder.Build();
 
