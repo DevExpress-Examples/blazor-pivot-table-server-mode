@@ -1,59 +1,81 @@
 ﻿@page "/"
 
-@using PivotTableBindToData.Data
-@using PivotTableBindToData.Northwind
+@using PivotTableBindToData.SalesDb
 @using Microsoft.EntityFrameworkCore
-@using System.Drawing;
-@inject IDbContextFactory<NorthwindContext> NorthwindContextFactory
-@implements IDisposable
+@using DevExpress.Data.Linq
+@inject IDbContextFactory<SalesContext> SalesContextFactory
+@inject IConfiguration Configuration
+@implements IAsyncDisposable
 @using DevExpress.Blazor.PivotTable
 
-<div>
-    <DxPivotTable Data="Data">
+@if (DataExists == true) {
+<DxPivotTable Data="DataSource"
+              VirtualScrollingEnabled="true">
     <Fields>
-        <DxPivotTableField Field="CategoryName" Area="@PivotTableArea.Row" SummaryType="PivotTableSummaryType.CountDistinct"/> 
-        <DxPivotTableField Field="ProductName"  Area="@PivotTableArea.Row" SummaryType="PivotTableSummaryType.CountDistinct"/>
-        <DxPivotTableField Field="OrderDate" Area="@PivotTableArea.Column" GroupInterval="@PivotTableGroupInterval.DateYear" Caption="Year" />
-        <DxPivotTableField Field="OrderDate" Area="@PivotTableArea.Column" GroupInterval="@PivotTableGroupInterval.DateQuarter" Caption="Quarter" >
+        <DxPivotTableField Field="@nameof(Sale.StoreName)" Area="@PivotTableArea.Row" SummaryType="PivotTableSummaryType.CountDistinct" />
+        <DxPivotTableField Field="@nameof(Sale.Year)" Area="@PivotTableArea.Column" />
+        <DxPivotTableField Field="@nameof(Sale.Quarter)" Area="@PivotTableArea.Column">
             <ValueTemplate>
                 <span>@($"Q{context.Text}")</span>
             </ValueTemplate>
-            </DxPivotTableField>
-        <DxPivotTableField Field="UnitPrice" Area="@PivotTableArea.Data" SummaryType="@PivotTableSummaryType.Sum" />
-        <DxPivotTableField Field="ShipCountry"  Area="@PivotTableArea.Filter" SummaryType="PivotTableSummaryType.CountDistinct"/>
-        <DxPivotTableField Field="ShipCity" Area="@PivotTableArea.Filter" SummaryType="PivotTableSummaryType.CountDistinct" />
+        </DxPivotTableField>
+        <DxPivotTableField Field="@nameof(Sale.Amount)" Area="@PivotTableArea.Data" SummaryType="@PivotTableSummaryType.Sum" />
+        <DxPivotTableField Field="@nameof(Sale.SaleId)" Caption="Count" Area="PivotTableArea.Data" SummaryType="PivotTableSummaryType.Count" />
     </Fields>
 </DxPivotTable>
-
-</div>
+}
+else if (DataExists == false) {
+    <div class="generate-data-container">
+        <p>The Sales table (or the database file) was not found.</p>
+        <DxButton Text="Generate data" Enabled="@(!IsGenerating)" Click="@GenerateDataAsync" />
+        @if (IsGenerating) {
+            <p>Generating 1,000,000 rows, please wait...</p>
+        }
+    </div>
+}
 
 @code {
-    NorthwindContext Northwind { get; set; }
-    IEnumerable<PivotRow> Data { get; set; }
+    SalesContext SalesContext { get; set; }
+    EntityServerModeSource DataSource { get; set; }
+    bool? DataExists { get; set; }
+    bool IsGenerating { get; set; }
 
-    protected override async Task OnInitializedAsync() {
-        Northwind = NorthwindContextFactory.CreateDbContext();
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (!firstRender || SalesContext != null)
+            return;
 
-        var products = await Northwind.Products.ToListAsync();
-        var categories = await Northwind.Categories.ToListAsync();
-        var orders = await Northwind.Orders.ToListAsync();
-        var orderDetails = await Northwind.OrderDetails.ToListAsync();
+        SalesContext = await SalesContextFactory.CreateDbContextAsync();
+        SalesContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-        Data = (from c in categories
-                      join p in products on c.CategoryId equals p.CategoryId
-                      join od in orderDetails on p.ProductId equals od.ProductId
-                      select new PivotRow{
-                          CategoryName = c.CategoryName,
-                          ProductName = p.ProductName,
-                          UnitPrice = p.UnitPrice,
-                          OrderDate = od.Order.OrderDate,
-                          ShipCountry = od.Order.ShipCountry,
-                          ShipCity = od.Order.ShipCity
-                      })
-              .ToList();
+        DataExists = await SalesDataGenerator.SalesTableExistsAsync(SalesContext);
+        if (DataExists == true)
+            CreateDataSource();
+
+        StateHasChanged();
     }
 
-   public void Dispose() {
-        Northwind?.Dispose();
+    async Task GenerateDataAsync() {
+        IsGenerating = true;
+        StateHasChanged();
+
+        await Task.Run(() => SalesDataGenerator.GenerateAsync(SalesContext, Configuration.GetValue("DataProvider", DataProviders.SQLite.ToString())));
+
+        CreateDataSource();
+        DataExists = true;
+        IsGenerating = false;
+        StateHasChanged();
+    }
+
+    void CreateDataSource() {
+        DataSource = new EntityServerModeSource {
+            QueryableSource = SalesContext.Sales,
+            KeyExpression = nameof(Sale.SaleId)
+        };
+    }
+
+    public async ValueTask DisposeAsync() {
+        DataSource?.Dispose();
+        if (SalesContext != null)
+            await SalesContext.DisposeAsync();
     }
 }
