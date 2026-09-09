@@ -1,9 +1,7 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
 
 #nullable disable
 
@@ -11,8 +9,26 @@ namespace PivotTableBindToData.SalesDb {
     public static class SalesDataGenerator {
 
         public static async Task<bool> SalesTableExistsAsync(SalesContext context) {
-            var databaseCreator = context.GetService<IRelationalDatabaseCreator>();
-            return await databaseCreator.HasTablesAsync();
+            if (!await DatabaseExistsAsync(context))
+                return false;
+            return await SalesTableExistsInDatabaseAsync(context);
+        }
+
+        static async Task<bool> DatabaseExistsAsync(SalesContext context) {            
+            return await context.Database.CanConnectAsync();
+        }
+
+        static async Task<bool> SalesTableExistsInDatabaseAsync(SalesContext context) {
+            string sql = context.Database.ProviderName switch {
+                "Microsoft.EntityFrameworkCore.Sqlite" =>
+                    "SELECT count(*) AS [Value] FROM sqlite_master WHERE type = 'table' AND name = 'Sales'",
+                "Microsoft.EntityFrameworkCore.SqlServer" =>
+                    "SELECT count(*) AS [Value] FROM sys.tables WHERE name = 'Sales'",
+                var provider => throw new NotSupportedException($"Unsupported database provider: '{provider}'.")
+            };
+
+            int tableCount = await context.Database.SqlQueryRaw<int>(sql).SingleAsync();
+            return tableCount > 0;
         }
 
         public static async Task GenerateAsync(SalesContext context, string dataProvider) {
