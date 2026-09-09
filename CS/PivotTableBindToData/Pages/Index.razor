@@ -26,12 +26,15 @@
 }
 else if (DataExists == false) {
     <div class="generate-data-container">
-        <p>The Sales table (or the database file) was not found.</p>
+        <p>The Sales table was not found.</p>
         <DxButton Text="Generate data" Enabled="@(!IsGenerating)" Click="@GenerateDataAsync" />
         @if (IsGenerating) {
             <p>Generating 1,000,000 rows, please wait...</p>
         }
     </div>
+}
+else {
+    <p>Checking for data...</p>
 }
 
 @code {

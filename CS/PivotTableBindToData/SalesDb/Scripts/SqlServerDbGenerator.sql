@@ -1,3 +1,15 @@
+USE [master];
+GO
+
+IF DB_ID(N'DevExpressExampleT1332466') IS NULL
+BEGIN
+    CREATE DATABASE [DevExpressExampleT1332466];
+END
+GO
+
+USE [DevExpressExampleT1332466];
+GO
+
 IF OBJECT_ID('dbo.Sales', 'U') IS NOT NULL
     DROP TABLE dbo.Sales;
 GO
