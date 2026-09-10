@@ -19,10 +19,10 @@ namespace PivotTableBindToData.SalesDb {
         }
 
         static async Task<bool> SalesTableExistsInDatabaseAsync(SalesContext context) {
-            string sql = context.Database.ProviderName switch {
-                "Microsoft.EntityFrameworkCore.Sqlite" =>
+            string sql = GetDataProvider(context) switch {
+                DataProviders.SQLite =>
                     "SELECT count(*) AS [Value] FROM sqlite_master WHERE type = 'table' AND name = 'Sales'",
-                "Microsoft.EntityFrameworkCore.SqlServer" =>
+                DataProviders.SqlServer =>
                     "SELECT count(*) AS [Value] FROM sys.tables WHERE name = 'Sales'",
                 var provider => throw new NotSupportedException($"Unsupported database provider: '{provider}'.")
             };
@@ -31,10 +31,11 @@ namespace PivotTableBindToData.SalesDb {
             return tableCount > 0;
         }
 
-        public static async Task GenerateAsync(SalesContext context, string dataProvider) {
+        public static async Task GenerateAsync(SalesContext context) {
+            var dataProvider = GetDataProvider(context);
             string resourceName = dataProvider switch {
-                nameof(DataProviders.SQLite) => "PivotTableBindToData.SalesDb.Scripts.SQLiteDbGenerator.sql",
-                nameof(DataProviders.SqlServer) => "PivotTableBindToData.SalesDb.Scripts.SqlServerDbGenerator.sql",
+                DataProviders.SQLite => "PivotTableBindToData.SalesDb.Scripts.SQLiteDbGenerator.sql",
+                DataProviders.SqlServer => "PivotTableBindToData.SalesDb.Scripts.SqlServerDbGenerator.sql",
                 _ => ""
             };
 
@@ -45,7 +46,7 @@ namespace PivotTableBindToData.SalesDb {
                 .Where(batch => batch.Length > 0)
                 .ToList();
 
-            if (dataProvider == nameof(DataProviders.SqlServer)) {
+            if (dataProvider == DataProviders.SqlServer) {
                 var connectionStringBuilder = new SqlConnectionStringBuilder(context.Database.GetConnectionString()) {
                     InitialCatalog = "master"
                 };
@@ -67,6 +68,9 @@ namespace PivotTableBindToData.SalesDb {
             foreach (var batch in batches)
                 await context.Database.ExecuteSqlRawAsync(batch);
         }
+
+        static DataProviders GetDataProvider(SalesContext context) =>
+            DataProvidersExtensions.FromEFProviderName(context.Database.ProviderName);
 
         static async Task<string> ReadEmbeddedScriptAsync(string resourceName) {
             var assembly = Assembly.GetExecutingAssembly();

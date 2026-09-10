@@ -4,7 +4,6 @@
 @using Microsoft.EntityFrameworkCore
 @using DevExpress.Data.Linq
 @inject IDbContextFactory<SalesContext> SalesContextFactory
-@inject IConfiguration Configuration
 @implements IAsyncDisposable
 @using DevExpress.Blazor.PivotTable
 
@@ -61,7 +60,7 @@ else {
         IsGenerating = true;
         StateHasChanged();
 
-        await Task.Run(() => SalesDataGenerator.GenerateAsync(SalesContext, Configuration.GetValue("DataProvider", DataProviders.SQLite.ToString())));
+        await Task.Run(() => SalesDataGenerator.GenerateAsync(SalesContext));
 
         CreateDataSource();
         DataExists = true;
