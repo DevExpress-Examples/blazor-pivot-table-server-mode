@@ -1,13 +1,13 @@
 USE [master];
 GO
 
-IF DB_ID(N'{DatabaseNameLiteral}') IS NULL
+IF DB_ID(N'{DatabaseName}') IS NULL
 BEGIN
-    CREATE DATABASE [{DatabaseNameIdentifier}];
+    CREATE DATABASE [{DatabaseName}];
 END
 GO
 
-USE [{DatabaseNameIdentifier}];
+USE [{DatabaseName}];
 GO
 
 IF OBJECT_ID('dbo.Sales', 'U') IS NOT NULL

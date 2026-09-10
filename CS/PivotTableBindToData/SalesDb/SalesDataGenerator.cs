@@ -49,13 +49,7 @@ namespace PivotTableBindToData.SalesDb {
             if (dataProvider == DataProviders.SqlServer) {
                 var connectionStringBuilder = new SqlConnectionStringBuilder(context.Database.GetConnectionString());
                 string databaseName = connectionStringBuilder.InitialCatalog;
-                if (string.IsNullOrWhiteSpace(databaseName))
-                    throw new InvalidOperationException("The SQL Server connection string must specify a database name.");
-
-                script = script
-                    .Replace("{DatabaseNameLiteral}", databaseName.Replace("'", "''"))
-                    .Replace("{DatabaseNameIdentifier}", databaseName.Replace("]", "]]"));
-
+                script = script.Replace("{DatabaseName}", databaseName);
                 connectionStringBuilder.InitialCatalog = "master";
 
                 await using var connection = new SqlConnection(connectionStringBuilder.ConnectionString);
