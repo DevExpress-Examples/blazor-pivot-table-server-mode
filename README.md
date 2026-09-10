@@ -6,7 +6,7 @@
 <!-- default badges end -->
 # Blazor Pivot Table – Data binding using Entity Framework Core in Server Mode
 
-This example uses [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/) to bind the [DevExpress Blazor Pivot Table](https://docs.devexpress.com/Blazor/405245/components/pivot-table) to data in Server Mode. This example supports SQLite and SQL Server. The database engine is sonfigured in the `appsettings.json` file.
+This example uses [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/) to bind the [DevExpress Blazor Pivot Table](https://docs.devexpress.com/Blazor/405245/components/pivot-table) to data in Server Mode. This example supports SQLite and SQL Server. The database engine is configured in the `appsettings.json` file.
 
 ![Bind DevExpress Blazor Pivot Table to Data with Entity Framework Core](/images/bind-to-data.png)
 
