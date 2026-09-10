@@ -11,21 +11,17 @@ builder.Services.AddDevExpressBlazor();
 
 var dataProvider = builder.Configuration.GetValue("DataProvider", DataProviders.SQLite);
 
-switch (dataProvider) {
-    case DataProviders.SQLite:
-        builder.Services.AddDbContextFactory<SalesContext>((sp, options) => {
-            var env = sp.GetRequiredService<IWebHostEnvironment>();
-            var dbPath = Path.Combine(env.ContentRootPath, "sales.db");
-            options.UseSqlite("Data Source=" + dbPath);
-        });
-        break;
-    case DataProviders.SqlServer:
-        builder.Services.AddDbContextFactory<SalesContext>(options => {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("SalesDatabase"));
-        });
-        break;
-    default:
-        throw new NotSupportedException($"Unsupported database provider: '{dataProvider}'.");
+if (dataProvider == DataProviders.SQLite) {
+    builder.Services.AddDbContextFactory<SalesContext>((sp, options) => {
+        var env = sp.GetRequiredService<IWebHostEnvironment>();
+        var dbPath = Path.Combine(env.ContentRootPath, "sales.db");
+        options.UseSqlite("Data Source=" + dbPath);
+    });
+}
+else if (dataProvider == DataProviders.SqlServer) {
+    builder.Services.AddDbContextFactory<SalesContext>(options => {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("SalesDatabase"));
+    });
 }
 
 var app = builder.Build();
