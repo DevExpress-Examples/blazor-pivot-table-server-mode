@@ -41,10 +41,6 @@ namespace PivotTableBindToData.SalesDb {
 
             string script = await ReadEmbeddedScriptAsync(resourceName);
 
-            var batches = Regex.Split(script, @"^\s*GO\s*$", RegexOptions.Multiline | RegexOptions.IgnoreCase)
-                .Select(batch => batch.Trim())
-                .Where(batch => batch.Length > 0)
-                .ToList();
 
             if (dataProvider == DataProviders.SqlServer) {
                 var connectionStringBuilder = new SqlConnectionStringBuilder(context.Database.GetConnectionString());
@@ -54,6 +50,11 @@ namespace PivotTableBindToData.SalesDb {
 
                 await using var connection = new SqlConnection(connectionStringBuilder.ConnectionString);
                 await connection.OpenAsync();
+
+                var batches = Regex.Split(script, @"^\s*GO\s*$", RegexOptions.Multiline | RegexOptions.IgnoreCase)
+                    .Select(batch => batch.Trim())
+                    .Where(batch => batch.Length > 0)
+                    .ToList();
 
                 foreach (var batch in batches) {
                     await using var command = connection.CreateCommand();
@@ -65,9 +66,7 @@ namespace PivotTableBindToData.SalesDb {
             }
 
             context.Database.SetCommandTimeout(0);
-
-            foreach (var batch in batches)
-                await context.Database.ExecuteSqlRawAsync(batch);
+            await context.Database.ExecuteSqlRawAsync(script);
         }
 
         static DataProviders GetDataProvider(SalesContext context) =>
