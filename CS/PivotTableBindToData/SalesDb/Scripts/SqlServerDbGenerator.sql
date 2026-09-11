@@ -1,3 +1,15 @@
+USE [master];
+GO
+
+IF DB_ID(N'{DatabaseName}') IS NULL
+BEGIN
+    CREATE DATABASE [{DatabaseName}];
+END
+GO
+
+USE [{DatabaseName}];
+GO
+
 IF OBJECT_ID('dbo.Sales', 'U') IS NOT NULL
     DROP TABLE dbo.Sales;
 GO
