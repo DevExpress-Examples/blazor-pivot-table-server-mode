@@ -4,11 +4,20 @@
 [![](https://img.shields.io/badge/📖_How_to_use_DevExpress_Examples-e9f6fc?style=flat-square)](https://docs.devexpress.com/GeneralInformation/403183)
 [![](https://img.shields.io/badge/💬_Leave_Feedback-feecdd?style=flat-square)](#does-this-example-address-your-development-requirementsobjectives)
 <!-- default badges end -->
-# Blazor Pivot Table – Data binding using Entity Framework Core in Server Mode
+# Blazor Pivot Table – Server Mode Data Processing
 
-This example uses [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/) to bind the [DevExpress Blazor Pivot Table](https://docs.devexpress.com/Blazor/405245/components/pivot-table) to data in Server Mode. This example supports SQLite and SQL Server. The database engine is configured in the `appsettings.json` file.
+This example binds the [DevExpress Blazor Pivot Table](https://docs.devexpress.com/Blazor/405245/components/pivot-table) component to a server mode data source. The data source loads data in small chunks on demand and delegates data shaping operations to [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/). It reduces memory consumption and improves overall performance when working with large collections.
 
 ![Bind DevExpress Blazor Pivot Table to Data with Entity Framework Core](/images/bind-to-data.png)
+
+Refer to the following topic for additional information: [Bind the Pivot Table to Data](https://docs.devexpress.com/Blazor/405475/components/pivottable/bind-to-data).
+
+## Quick Start
+
+The example requires a specific SQLite/SQL Server database file. On the first run (and whenever the file is missing), the application displays a **Generate Data** button. Click the button to create the database and continue.
+
+This example binds the DevExpress Blazor Pivot Table to an SQLite database. To use a SQL Server database, set the `DataProvider` setting to `SqlServer` in [appsettings.json](./CS/PivotTableBindToData/appsettings.json).
+
 
 ## Files to Review
 
@@ -16,16 +25,11 @@ This example uses [Entity Framework Core](https://learn.microsoft.com/en-us/ef/c
 - [Program.cs](./CS/PivotTableBindToData/Program.cs)
 - [SalesDataGenerator.cs](./CS/PivotTableBindToData/SalesDb/SalesDataGenerator.cs)
 
-If the `Sales` table (or the database file) is not found, the page displays a **Generate data**
-button instead of the Pivot Table. After confirmation, the app runs the SQL script that matches
-the configured data provider (SQLite or SQL Server) to create the table and populate it with around
-1,000,000 sample rows.
-
 ## Documentation
 
-- [Bind Blazor Components to Data with Entity Framework Core](https://docs.devexpress.com/Blazor/403167/common-concepts/data-binding/bind-components-to-data-with-entity-framework-core)
 - [Get Started with the Pivot Table](https://docs.devexpress.com/Blazor/405246/components/pivottable/get-started-with-pivottable)
 - [Bind the Pivot Table to Data](https://docs.devexpress.com/Blazor/405475/components/pivottable/bind-to-data)
+- [Bind Blazor Components to Data with Entity Framework Core](https://docs.devexpress.com/Blazor/403167/common-concepts/data-binding/bind-components-to-data-with-entity-framework-core)
 
 <!-- feedback -->
 ## Does This Example Address Your Development Requirements/Objectives?
@@ -34,5 +38,3 @@ the configured data provider (SQLite or SQL Server) to create the table and popu
 
 (you will be redirected to DevExpress.com to submit your response)
 <!-- feedback end -->
-
-
