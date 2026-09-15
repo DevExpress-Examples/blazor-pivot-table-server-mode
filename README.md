@@ -14,7 +14,7 @@ Refer to the following topic for additional information: [Bind the Pivot Table t
 
 ## Quick Start
 
-The example requires a specific SQLite/SQL Server database file. On the first run (and whenever the file is missing), the application displays a **Generate Data** button. Click the button to create the database and continue.
+The example requires a specific SQLite/SQL Server database file. On the first run (and whenever the file is missing), the application displays a **Generate Data** button. Click the button to create the database and proceed.
 
 This example binds the DevExpress Blazor Pivot Table to an SQLite database. To use a SQL Server database, set the `DataProvider` setting to `SqlServer` in [appsettings.json](./CS/PivotTableBindToData/appsettings.json).
 

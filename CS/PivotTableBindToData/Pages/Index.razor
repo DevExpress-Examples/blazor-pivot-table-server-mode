@@ -27,7 +27,7 @@ else if (DataExists == false) {
     @if (IsGenerating) {
         <p>Generating sample data (1,000,000 rows). Please wait...</p>
     } else {
-        <p>The sample database was not found. Generate it to run the example.</p>
+        <p>The sample database was not found. Generate the database to run the example.</p>
         <DxButton Text="Generate Data" Click="@GenerateDataAsync" />
     }
 }
