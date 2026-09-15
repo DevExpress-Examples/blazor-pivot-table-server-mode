@@ -6,7 +6,7 @@
 <!-- default badges end -->
 # Blazor Pivot Table – Server Mode Data Processing
 
-This example binds the [DevExpress Blazor Pivot Table](https://docs.devexpress.com/Blazor/405245/components/pivot-table) component to a server mode data source. The data source loads data in small chunks on demand and delegates data shaping operations to [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/). It reduces memory consumption and improves overall performance when working with large collections.
+This example binds the [DevExpress Blazor Pivot Table](https://docs.devexpress.com/Blazor/405245/components/pivot-table) component to a server mode data source. The data source loads data in small chunks on demand and delegates data shaping operations to [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/). Server Mode reduces memory consumption and improves overall performance when working with large collections.
 
 ![Bind DevExpress Blazor Pivot Table to Data with Entity Framework Core](/images/bind-to-data.png)
 
