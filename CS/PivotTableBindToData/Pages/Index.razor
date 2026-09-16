@@ -8,32 +8,31 @@
 @using DevExpress.Blazor.PivotTable
 
 @if (DataExists == true) {
-<DxPivotTable Data="DataSource"
-              VirtualScrollingEnabled="true">
-    <Fields>
-        <DxPivotTableField Field="@nameof(Sale.StoreName)" Area="@PivotTableArea.Row" SummaryType="PivotTableSummaryType.CountDistinct" />
-        <DxPivotTableField Field="@nameof(Sale.Year)" Area="@PivotTableArea.Column" />
-        <DxPivotTableField Field="@nameof(Sale.Quarter)" Area="@PivotTableArea.Column">
-            <ValueTemplate>
-                <span>@($"Q{context.Text}")</span>
-            </ValueTemplate>
-        </DxPivotTableField>
-        <DxPivotTableField Field="@nameof(Sale.Amount)" Area="@PivotTableArea.Data" SummaryType="@PivotTableSummaryType.Sum" />
-        <DxPivotTableField Field="@nameof(Sale.SaleId)" Caption="Count" Area="PivotTableArea.Data" SummaryType="PivotTableSummaryType.Count" />
-    </Fields>
-</DxPivotTable>
+    <DxPivotTable Data="DataSource"
+                  VirtualScrollingEnabled="true">
+        <Fields>
+            <DxPivotTableField Field="@nameof(Sale.StoreName)" Area="@PivotTableArea.Row" SummaryType="PivotTableSummaryType.CountDistinct" />
+            <DxPivotTableField Field="@nameof(Sale.Year)" Area="@PivotTableArea.Column" />
+            <DxPivotTableField Field="@nameof(Sale.Quarter)" Area="@PivotTableArea.Column">
+                <ValueTemplate>
+                    <span>@($"Q{context.Text}")</span>
+                </ValueTemplate>
+            </DxPivotTableField>
+            <DxPivotTableField Field="@nameof(Sale.Amount)" Area="@PivotTableArea.Data" SummaryType="@PivotTableSummaryType.Sum" />
+            <DxPivotTableField Field="@nameof(Sale.SaleId)" Caption="Count" Area="PivotTableArea.Data" SummaryType="PivotTableSummaryType.Count" />
+        </Fields>
+    </DxPivotTable>
 }
 else if (DataExists == false) {
-    <div class="generate-data-container">
-        <p>The Sales table was not found.</p>
-        <DxButton Text="Generate data" Enabled="@(!IsGenerating)" Click="@GenerateDataAsync" />
-        @if (IsGenerating) {
-            <p>Generating 1,000,000 rows, please wait...</p>
-        }
-    </div>
+    @if (IsGenerating) {
+        <p>Generating sample data (1,000,000 rows). Please wait...</p>
+    } else {
+        <p>The sample database was not found. Generate the database to run the example.</p>
+        <DxButton Text="Generate Data" Click="@GenerateDataAsync" />
+    }
 }
 else {
-    <p>Checking for data...</p>
+    <p>Checking the database...</p>
 }
 
 @code {
