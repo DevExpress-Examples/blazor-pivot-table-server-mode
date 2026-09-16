@@ -6,7 +6,7 @@
 <!-- default badges end -->
 # Blazor Pivot Table – Server Mode Data Processing
 
-This example binds the [DevExpress Blazor Pivot Table](https://docs.devexpress.com/Blazor/405245/components/pivot-table) component to a server mode data source. The data source loads data in small chunks on demand and delegates data shaping operations to [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/). Server Mode reduces memory consumption and improves overall performance when working with large collections.
+This example binds the [DevExpress Blazor Pivot Table](https://docs.devexpress.com/Blazor/405245/components/pivot-table) component to a server mode data source. The data source loads data in small chunks (on demand) and delegates data shaping operations to [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/). Server Mode reduces memory consumption and improves overall performance when working with large collections.
 
 ![Bind DevExpress Blazor Pivot Table to Data with Entity Framework Core](/images/bind-to-data.png)
 
@@ -16,7 +16,7 @@ Refer to the following topic for additional information: [Bind the Pivot Table t
 
 The example requires a specific SQLite/SQL Server database file. On the first run (and whenever the file is missing), the application displays a **Generate Data** button. Click the button to create the database and proceed.
 
-This example binds the DevExpress Blazor Pivot Table to an SQLite database. To use a SQL Server database, set the `DataProvider` setting to `SqlServer` in [appsettings.json](./CS/PivotTableBindToData/appsettings.json).
+This example binds the DevExpress Blazor Pivot Table to a SQLite database. To use a SQL Server database, set the `DataProvider` setting to `SqlServer` in [appsettings.json](./CS/PivotTableBindToData/appsettings.json).
 
 
 ## Files to Review
